@@ -1,0 +1,77 @@
+.checklist-container {
+  flex: 1;
+  padding: 20px;
+  background: var(--checklist-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checklist-header-box {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checklist-title {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: var(--font-color);
+  font-weight: bold;
+}
+
+.progress {
+  height: 14px;
+  background: #d0d0d0;
+  border-radius: 7px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #4db6ac;
+  width: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+#progress-label {
+  font-size: 0.9rem;
+  color: var(--font-color);
+}
+
+#new-task {
+  width: 100%;
+  padding: 10px;
+  margin: 0 0 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--new-task-bg-color);
+}
+
+.task-text {
+  flex: 1;
+  text-align: left;
+  margin-left: 20px;
+  font-size: var(--task-font-size);
+  font-family: var(--task-font-family);
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-delete {
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.done {
+  text-decoration: line-through;
+  color: gray;
+}

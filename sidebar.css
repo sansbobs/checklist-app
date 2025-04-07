@@ -1,0 +1,80 @@
+.sidebar {
+  width: 250px;
+  background: var(--sidebar-bg-color);
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #d3dfef;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 30px;
+  background: #2e506e;
+}
+
+.sidebar-icon-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#new-list {
+  margin-bottom: 15px;
+  background: var(--button-bg-color);
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+#new-list:hover {
+  background: var(--button-hover-bg-color);
+}
+
+.checklist-links {
+  margin-top: 15px;
+  background: #2e506e;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.checklist-links h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.centered-title {
+  text-align: center;
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.checklist-links ul li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--button-bg-color);
+  color: white;
+  padding: 10px 15px;
+  margin: 5px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.checklist-links ul li:hover {
+  background: var(--button-hover-bg-color);
+}

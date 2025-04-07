@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checklist App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1f3a52">
+  <link rel="icon" href="icons/icon-192.png" />
+  <style>
+    :root {
+      --sidebar-bg-color: #1f3a52;
+      --button-bg-color: #5c6bc0;
+      --button-hover-bg-color: #3f51b5;
+      --main-bg-color: #f0f4f8;
+      --checklist-bg-color: #ffffff;
+      --new-task-bg-color: #e8f0fe;
+      --font-color: #333;
+      --font-family: Arial, sans-serif;
+      --task-font-size: 16px;
+      --task-font-family: Arial;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--main-bg-color);
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      color: var(--font-color);
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg-color);
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #d3dfef;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 30px;
+      background: #2e506e;
+    }
+
+    .sidebar-icon-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #new-list {
+      margin-bottom: 15px;
+      background: var(--button-bg-color);
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    #new-list:hover {
+      background: var(--button-hover-bg-color);
+    }
+
+    .checklist-links {
+      margin-top: 15px;
+      background: #2e506e;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .checklist-links h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .centered-title {
+      text-align: center;
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+
+    .checklist-links ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .checklist-links ul li {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--button-bg-color);
+      color: white;
+      padding: 10px 15px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .checklist-links ul li:hover {
+      background: var(--button-hover-bg-color);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--main-bg-color);
+      padding: 20px;
+    }
+
+    .checklist-container {
+      flex: 1;
+      padding: 20px;
+      background: var(--checklist-bg-color);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .checklist-header-box {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      background: #f8f9fa;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .checklist-title {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--font-color);
+      font-weight: bold;
+    }
+
+    .progress {
+      height: 14px;
+      background: #d0d0d0;
+      border-radius: 7px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #4db6ac;
+      width: 0;
+      transition: width 0.3s ease-in-out;
+    }
+
+    #progress-label {
+      font-size: 0.9rem;
+      color: var(--font-color);
+    }
+
+    #new-task {
+      width: 100%;
+      padding: 10px;
+      margin: 0 0 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: var(--new-task-bg-color);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8f9fa;
+      padding: 10px 15px;
+      margin: 5px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-text {
+      flex: 1;
+      text-align: left;
+      margin-left: 20px;
+      font-size: var(--task-font-size);
+      font-family: var(--task-font-family);
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-delete {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #323232;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 9999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #context-menu {
+      position: absolute;
+      display: none;
+      z-index: 10000;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      min-width: 120px;
+    }
+
+    #context-menu ul {
+      list-style: none;
+      padding: 5px 0;
+      margin: 0;
+    }
+
+    #context-menu ul li {
+      padding: 8px 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    #context-menu ul li:hover {
+      background: #cce4ff;
+      color: var(--font-color);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-icon-row">
+        <span id="home-icon" title="Home" style="cursor: pointer; font-size: 1.5em;">🏠</span>
+      </div>
+    </div>
+    <div class="checklist-links">
+      <button id="new-list">📋 New List</button>
+      <h3 class="centered-title">Checklists</h3>
+      <ul id="sidebar-checklists"></ul>
+    </div>
+    <div class="font-settings">
+      <h3>Font Settings</h3>
+      <label for="font-size-slider">Font Size:</label>
+      <input type="range" id="font-size-slider" min="25" max="60" value="16" />
+      <label for="font-family-dropdown">Font Family:</label>
+      <select id="font-family-dropdown">
+        <option value="Arial" selected>Arial</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Tahoma">Tahoma</option>
+        <option value="Courier New">Courier New</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="checklist-container">
+      <div class="checklist-header-box">
+        <div class="checklist-title" id="checklist-title">Select a Checklist</div>
+        <div class="progress">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div id="progress-label">0% completed</div>
+      </div>
+      <input type="text" id="new-task" placeholder="New Task">
+      <ul id="task-list"></ul>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <div id="context-menu">
+    <ul>
+      <li id="rename-option">Rename</li>
+      <li id="delete-option">Delete</li>
+    </ul>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const STORAGE_KEY = 'adhd_web_checklists';
+  let currentList = null;
+
+  const getChecklists = () => JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  const saveChecklists = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  const showToast = (message) => {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  };
+
+  const refreshSidebar = () => {
+    const lists = getChecklists();
+    const sidebar = document.getElementById('sidebar-checklists');
+    if (!sidebar) return console.error("Sidebar element not found!");
+    sidebar.innerHTML = '';
+    Object.keys(lists).forEach(name => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      li.dataset.name = name;
+      li.addEventListener('click', () => {
+        currentList = name;
+        showChecklist(name);
+      });
+      li.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const menu = document.getElementById('context-menu');
+        if (!menu) return;
+        menu.style.top = `${e.pageY}px`;
+        menu.style.left = `${e.pageX}px`;
+        menu.style.display = 'block';
+        menu.dataset.targetList = name;
+        menu.dataset.type = 'checklist';
+        document.getElementById('rename-option').textContent = 'Rename';
+      });
+      sidebar.appendChild(li);
+    });
+  };
+
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('context-menu');
+    if (menu && !menu.contains(e.target)) menu.style.display = 'none';
+  });
+
+  const attachContextMenuListeners = () => {
+    const rename = document.getElementById('rename-option');
+    const del = document.getElementById('delete-option');
+    if (!rename || !del) return console.error("Context menu actions not found!");
+
+    rename.addEventListener('click', () => {
+      const menu = document.getElementById('context-menu');
+      const target = menu.dataset.targetList;
+      if (menu.dataset.type === 'checklist' && target) {
+        const item = [...document.querySelectorAll('#sidebar-checklists li')]
+          .find(li => li.dataset.name === target);
+        if (!item) return;
+        item.contentEditable = true;
+        item.focus();
+        const range = document.createRange();
+        range.selectNodeContents(item);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const onBlur = () => {
+          const newName = item.textContent.trim();
+          const lists = getChecklists();
+          const original = item.dataset.name;
+          if (!newName || newName.toLowerCase() === original.toLowerCase()) {
+            item.textContent = original;
+            item.contentEditable = false;
+            return;
+          }
+          const conflict = Object.keys(lists).some(
+            name => name.toLowerCase() === newName.toLowerCase() && name !== original
+          );
+          if (conflict) {
+            alert('Name already exists.');
+            item.textContent = original;
+            item.contentEditable = false;
+            return;
+          }
+          lists[newName] = lists[original];
+          delete lists[original];
+          saveChecklists(lists);
+          currentList = newName;
+          item.contentEditable = false;
+          refreshSidebar();
+          showChecklist(newName);
+        };
+
+        const onKey = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            item.blur();
+          } else if (e.key === 'Escape') {
+            item.textContent = item.dataset.name;
+            item.contentEditable = false;
+          }
+        };
+
+        item.addEventListener('blur', onBlur, { once: true });
+        item.addEventListener('keydown', onKey);
+      }
+      menu.style.display = 'none';
+    });
+
+    del.addEventListener('click', () => {
+      const menu = document.getElementById('context-menu');
+      const type = menu.dataset.type;
+      if (type === 'checklist') {
+        const target = menu.dataset.targetList;
+        if (!target) return;
+        const lists = getChecklists();
+        delete lists[target];
+        saveChecklists(lists);
+        if (currentList === target) {
+          currentList = null;
+          showHomeScreen();
+        }
+        refreshSidebar();
+      }
+      menu.style.display = 'none';
+    });
+  };
+
+  const renderTasks = () => {
+    const lists = getChecklists();
+    const tasks = lists[currentList] || [];
+    const taskList = document.getElementById('task-list');
+    if (!taskList) return;
+    taskList.innerHTML = '';
+    tasks.forEach((task, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+          <input type="checkbox" class="custom-checkbox" ${task.done ? 'checked' : ''} />
+          <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
+          <button class="task-delete">✖</button>
+        </div>`;
+      li.querySelector('.custom-checkbox').addEventListener('change', () => {
+        task.done = !task.done;
+        saveChecklists(lists);
+        renderTasks();
+      });
+      li.querySelector('.task-delete').addEventListener('click', () => {
+        tasks.splice(i, 1);
+        saveChecklists(lists);
+        renderTasks();
+      });
+      taskList.appendChild(li);
+    });
+    updateProgress(tasks);
+  };
+
+  const updateProgress = (tasks) => {
+    const done = tasks.filter(t => t.done).length;
+    const percent = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+    document.getElementById('progress-bar').style.width = percent + '%';
+    document.getElementById('progress-label').textContent = `${percent}% completed`;
+  };
+
+  const showHomeScreen = () => {
+    const main = document.querySelector('.main-content');
+    if (!main) return;
+    main.innerHTML = `
+      <div class="home-container">
+        <h2>Welcome to the Checklist App</h2>
+        <p>Select a checklist from the sidebar or create a new one to get started.</p>
+      </div>`;
+    refreshSidebar();
+  };
+
+  const attachNewTaskListener = () => {
+    const input = document.getElementById('new-task');
+    if (!input) return;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const text = e.target.value.trim();
+        if (!text || !currentList) return;
+        const lists = getChecklists();
+        lists[currentList].push({ text, done: false });
+        saveChecklists(lists);
+        e.target.value = '';
+        renderTasks();
+      }
+    });
+  };
+
+  const attachNewListButtonListener = () => {
+    const btn = document.getElementById('new-list');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const name = prompt('Enter a name for the new checklist:');
+      if (!name) return;
+      const lists = getChecklists();
+      if (lists[name]) return alert('Checklist already exists.');
+      lists[name] = [];
+      saveChecklists(lists);
+      currentList = name;
+      refreshSidebar();
+      showChecklist(name);
+    });
+  };
+
+  const showChecklist = (name) => {
+    const main = document.querySelector('.main-content');
+    if (!main) return;
+    main.innerHTML = `
+      <div class="checklist-container">
+        <div class="checklist-header-box">
+          <div class="checklist-title" id="checklist-title">${name}</div>
+          <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+          <div id="progress-label">0% completed</div>
+        </div>
+        <input type="text" id="new-task" placeholder="New Task">
+        <ul id="task-list"></ul>
+      </div>`;
+    currentList = name;
+    attachNewTaskListener();
+    renderTasks();
+  };
+
+  // Font controls
+  document.getElementById('font-size-slider')?.addEventListener('input', e =>
+    document.documentElement.style.setProperty('--task-font-size', `${e.target.value}px`)
+  );
+  document.getElementById('font-family-dropdown')?.addEventListener('change', e =>
+    document.documentElement.style.setProperty('--task-font-family', e.target.value)
+  );
+
+  document.getElementById('home-icon')?.addEventListener('click', showHomeScreen);
+  attachNewListButtonListener();
+  attachContextMenuListeners();
+  showHomeScreen();
+});
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(reg => console.log("Service Worker registered ✅"))
+        .catch(err => console.error("Service Worker registration failed ❌", err));
+    });
+  }
+</script>
+
+</body>
+</html>
